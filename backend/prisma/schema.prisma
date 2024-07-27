@@ -18,6 +18,7 @@ model User {
   name        String
   username    String  @unique
   password    String   
+  account     UserAccount?
 }
 
 model Merchant {
@@ -25,4 +26,21 @@ model Merchant {
   name        String
   username    String  @unique
   password    String
+  account     MerchantAccount?
+}
+
+model UserAccount {
+  id         String @id  @default(uuid())
+  balance    Int    @default(0)
+  locked     Int    @default(0)
+  userId     String @unique
+  user       User @relation(fields: [userId], references: [id])
+}
+
+model MerchantAccount {
+  id         String @id  @default(uuid())
+  balance    Int    @default(0)
+  locked     Int    @default(0)
+  merchantId String @unique
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
 }
