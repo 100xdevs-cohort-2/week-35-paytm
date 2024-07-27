@@ -1,17 +1,17 @@
-import jwt from "jsonwebtoken";
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
-import { JWT_USER_PASS } from "../config";
+    import jwt from "jsonwebtoken";
+import { JWT_MERCHANT_PASS } from "../config";
 
 const prismaClient = new PrismaClient();
 
-export const userRouter = Router();
+export const merchantRouter = Router();
 
-userRouter.post("/signup", async (req, res) => {
+merchantRouter.post("/signup", async (req, res) => {
     const { username, password, name } = req.body; // zod to verify the schema
 
     try {
-        await prismaClient.user.create({
+        await prismaClient.merchant.create({
             data: {
                 username,
                 password,
@@ -26,28 +26,29 @@ userRouter.post("/signup", async (req, res) => {
             message: "Error while signing up"
         })
     }
+    
 })
 
-userRouter.post("/signin", async (req, res) => {
+merchantRouter.post("/signin", async (req, res) => {
     const { username, password } = req.body;
 
-    const user = await prismaClient.user.findFirst( {
+    const merchant = await prismaClient.merchant.findFirst( {
         where: {
             username,
             password
         }
     })
-    if (!user) {
+    if (!merchant) {
         return res.status(403).json({
             message: "Unable to log you in"
         })
     }
 
     const token = jwt.sign({
-        id: user.id,
-    }, JWT_USER_PASS)
+        id: merchant.id,
+    }, JWT_MERCHANT_PASS)
 
     return res.json({
         token
     }) 
-})
+}) 
